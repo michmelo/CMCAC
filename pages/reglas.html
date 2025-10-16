@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reglas de Negocio - CMCAC</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <div class="container-main">
+        <!-- Header -->
+        <div class="header">
+            <h1>Reglas de Negocio</h1>
+            <p>Documentación del sistema de cálculo de comisiones</p>
+        </div>
+
+        <!-- Content -->
+        <div class="container p-4">
+            <!-- Información -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Reglas de Negocio del Sistema</h2>
+                    <div class="alert alert-info d-flex align-items-center" role="alert">
+                        <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                        <div>
+                            <strong>Información:</strong> Estas son las reglas de negocio aplicadas en el cálculo de comisiones para auditores.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reglas -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="rule-box">
+                        <h4>1. Comisión por Auditoría Finalizada</h4>
+                        <p>
+                            Cada auditor recibirá una comisión mensual basada en el <span class="highlight">monto total de las auditorías finalizadas</span> dentro del período (mes y año de proceso).
+                            El porcentaje aplicado dependerá del rango de montos definido en la tabla <strong>PORC_MONTO_AUDITORIAS</strong>.
+                            Si el monto total no califica en ningún rango, la comisión será <strong>0%</strong>.
+                        </p>
+                        <p class="mt-2"><strong>Tabla aplicable:</strong> PORC_MONTO_AUDITORIAS</p>
+                    </div>
+
+                    <div class="rule-box">
+                        <h4>2. Comisión por Volumen de Auditorías</h4>
+                        <p>
+                            Se premiará a los auditores que realicen <span class="highlight">mayor cantidad de auditorías</span> dentro del mes.
+                            El porcentaje adicional se obtiene desde la tabla <strong>PORC_TOTAL_AUDITORIAS</strong>, de acuerdo con el número de auditorías terminadas.
+                            Si la cantidad no está dentro de los rangos definidos, se aplicará <strong>0%</strong> de bonificación.
+                        </p>
+                        <p class="mt-2"><strong>Tabla aplicable:</strong> PORC_TOTAL_AUDITORIAS</p>
+                    </div>
+
+                    <div class="rule-box">
+                        <h4>3. Incentivo por Tipo de Contrato</h4>
+                        <p>
+                            Cada auditor puede recibir un incentivo adicional basado en su <span class="highlight">tipo de contrato</span>.
+                            El porcentaje se obtiene directamente desde la tabla <strong>TIPO_CONTRATO</strong>, aplicándose sobre el total de comisiones generadas.
+                            Si el contrato no tiene incentivo asociado, el valor será de un <strong>0%</strong>.
+                        </p>
+                        <p class="mt-2"><strong>Tabla aplicable:</strong> TIPO_CONTRATO</p>
+                    </div>
+
+                    <div class="rule-box">
+                        <h4>4. Bonificación por Nivel de Profesión</h4>
+                        <p>
+                            Se otorga un incentivo vinculado al <span class="highlight">nivel de criticidad de la profesión</span> del auditor, con el objetivo de valorar su experiencia y especialización.
+                            El incentivo se calculará como porcentaje adicional sobre la comisión total:
+                        </p>
+                        <ul class="mt-2 ms-4">
+                            <li><strong>Nivel 1:</strong> 1%</li>
+                            <li><strong>Nivel 2:</strong> 3%</li>
+                            <li><strong>Nivel 3:</strong> 4%</li>
+                            <li><strong>Nivel 4:</strong> 6%</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-box">
+                        <h4>5. Límite de Comisión Mensual</h4>
+                        <p>
+                            El total de comisiones percibidas por un auditor <span class="highlight">no podrá superar</span> el monto definido por la variable bind <strong>:b_limite_comision</strong>.
+                            Si se excede el límite, el valor se ajustará automáticamente y el evento quedará registrado en la tabla <strong>ERROR_PROCESO</strong>.
+                        </p>
+                        <p class="mt-2"><strong>Acción:</strong> Ajuste automático + registro en ERROR_PROCESO</p>
+                    </div>
+
+                    <div class="rule-box">
+                        <h4>6. Tablas de Resumen y Detalle del Proceso</h4>
+                        <p>El sistema generará dos registros de salida:</p>
+                        <ul class="mt-2 ms-4">
+                            <li><strong>RESUMEN_COMISIONES_AUDITORIAS_MES:</strong> Agrupa la información por profesión (mes, año, total auditores, total con y sin auditorías, monto total y total comisiones).</li>
+                            <li><strong>DETALLE_COMISIONES_AUDITORIAS_MES:</strong> Detalla la información individual por auditor (RUN, nombre, profesión, comisiones por monto, totales y bonificaciones).</li>
+                        </ul>
+                    </div>
+
+                    <div class="rule-box">
+                        <h4>7. Gestión de Errores</h4>
+                        <p>
+                            Todos los errores detectados durante el proceso se almacenarán en la tabla <strong>ERROR_PROCESO</strong>, indicando correlativo, sentencia y descripción del error.
+                            Esto asegura <span class="highlight">trazabilidad y control de calidad</span> en la ejecución.
+                        </p>
+                        <p class="mt-2"><strong>Tabla aplicable:</strong> ERROR_PROCESO</p>
+                    </div>
+
+                    <div class="rule-box">
+                        <h4>8. Bono por Afiliación a ISAPRE (VARRAY)</h4>
+                        <p>
+                            Se aplicará un <span class="highlight">bono especial</span> según la institución de salud previsional (ISAPRE) a la que esté afiliado el auditor.
+                            Se almacenan los porcentajes de bonificación asociados a las principales isapres:
+                        </p>
+                        <ul class="mt-2 ms-4">
+                            <li><strong>Colmena:</strong> 5%</li>
+                            <li><strong>Cruz Blanca:</strong> 4%</li>
+                            <li><strong>Consalud:</strong> 3%</li>
+                            <li><strong>Banmédica:</strong> 4%</li>
+                            <li><strong>Vida Tres:</strong> 2%</li>
+                        </ul>
+                        <p class="mt-2"><strong>Implementación:</strong> VARRAY en PL/SQL</p>
+                    </div>
+
+                    <div class="rule-box">
+                        <h4>9. Otros Procesos Técnicos</h4>
+                        <p>El sistema implementa las siguientes características técnicas:</p>
+                        <ul class="mt-2 ms-4">
+                            <li>Uso de <strong>variables bind</strong> para año y mes del proceso</li>
+                            <li><strong>Cursores</strong> con y sin parámetros para recorrer profesiones y auditorías</li>
+                            <li>Variables escalares y totalizadoras para cálculos acumulativos</li>
+                            <li><strong>Bucles FOR</strong> simples y parametrizados para procesar registros</li>
+                            <li><strong>VARRAY o DECLARE</strong> para almacenamiento temporal de resultados</li>
+                            <li>Truncamiento de tablas antes de iniciar un nuevo proceso</li>
+                            <li>Manejo de <strong>excepciones</strong> y registro en tabla de errores</li>
+                            <li>Mensajes de errores para consola</li>
+                            <li><strong>Triggers</strong> para validar datos antes de inserciones</li>
+                            <li><strong>1 Función y procedimientos</strong> dentro de un Package PL/SQL</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="../js/navbar.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html>
+
