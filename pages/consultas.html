@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultas - CMCAC</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <div class="container-main">
+        <!-- Header -->
+        <div class="header">
+            <h1>Consultas del Sistema</h1>
+            <p>Consulta de comisiones y calculadora</p>
+        </div>
+
+        <!-- Content -->
+        <div class="container p-4">
+            <!-- Consultar por Auditor -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Consultar Comisiones por Auditor</h2>
+                    
+                    <form id="formConsultaAuditor" onsubmit="consultarPorAuditor(event)">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="runAuditor" class="form-label">RUN Auditor:</label>
+                                <input type="text" id="runAuditor" class="form-control" placeholder="Ej: 12345678-9">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="mesConsulta" class="form-label">Mes:</label>
+                                <select id="mesConsulta" class="form-select">
+                                    <option value="">Todos</option>
+                                    <option value="1">Enero</option>
+                                    <option value="2">Febrero</option>
+                                    <option value="3">Marzo</option>
+                                    <option value="4">Abril</option>
+                                    <option value="5">Mayo</option>
+                                    <option value="6">Junio</option>
+                                    <option value="7">Julio</option>
+                                    <option value="8">Agosto</option>
+                                    <option value="9">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="anioConsulta" class="form-label">Año:</label>
+                                <input type="number" id="anioConsulta" class="form-control" min="2012" max="2025" value="2024">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Consultar
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Calculadora de Comisiones -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">Calculadora de Comisiones</h3>
+                    <form id="formCalculadora" onsubmit="calcularComision(event)">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="montoAuditorias" class="form-label">Monto Total Auditorías ($):</label>
+                                <input type="number" id="montoAuditorias" class="form-control" placeholder="Ej: 15000000" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cantidadAuditorias" class="form-label">Cantidad de Auditorías:</label>
+                                <input type="number" id="cantidadAuditorias" class="form-control" min="0" placeholder="Ej: 8" required>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label for="tipoContrato" class="form-label">Tipo de Contrato:</label>
+                                <select id="tipoContrato" class="form-select" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="indefinido">Indefinido (3%)</option>
+                                    <option value="plazo_fijo">Plazo Fijo (2%)</option>
+                                    <option value="honorarios">Honorarios (1%)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="nivelProfesion" class="form-label">Nivel de Profesión:</label>
+                                <select id="nivelProfesion" class="form-select" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="1">Nivel 1 (1%)</option>
+                                    <option value="2">Nivel 2 (3%)</option>
+                                    <option value="3">Nivel 3 (4%)</option>
+                                    <option value="4">Nivel 4 (6%)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="isapre" class="form-label">ISAPRE:</label>
+                                <select id="isapre" class="form-select" required>
+                                    <option value="">Sin ISAPRE (0%)</option>
+                                    <option value="colmena">Colmena (5%)</option>
+                                    <option value="cruz_blanca">Cruz Blanca (4%)</option>
+                                    <option value="consalud">Consalud (3%)</option>
+                                    <option value="banmedica">Banmédica (4%)</option>
+                                    <option value="vida_tres">Vida Tres (2%)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-calculator"></i> Calcular Comisión Total
+                        </button>
+                    </form>
+                    
+                    <div id="resultadoCalculadora" class="alert alert-success mt-3" style="display: none;">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-cash-stack fs-3 me-3"></i>
+                            <div>
+                                <h4>Resultado del Cálculo:</h4>
+                                <p id="detalleCalculadora"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultados de Consulta -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">Resultados de Consulta</h3>
+                    <div class="table-responsive">
+                        <table id="tablaResultados" class="table table-striped table-hover" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>RUN</th>
+                                    <th>Nombre Auditor</th>
+                                    <th>Profesión</th>
+                                    <th>Auditorías</th>
+                                    <th>Com. Monto</th>
+                                    <th>Com. Volumen</th>
+                                    <th>Incentivo Contrato</th>
+                                    <th>Bonif. Profesión</th>
+                                    <th>Bono ISAPRE</th>
+                                    <th>Total Comisión</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyResultados">
+                                <!-- Los resultados se cargarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="../js/navbar.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/consultas.js"></script>
+</body>
+</html>
+
