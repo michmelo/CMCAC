@@ -12,5 +12,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Nombres de meses
 const mesesNombre = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
-                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
 
+async function cargarEstadisticas() {
+    try {
+        const response = await fetch('http://localhost:3000/api/estadisticas');
+        const stats = await response.json();
+        
+        // Actualizar las estadísticas en el index.html
+        document.querySelector('.stat-card:nth-child(1) h3').textContent = stats.auditoresActivos;
+        document.querySelector('.stat-card:nth-child(2) h3').textContent = stats.auditoriasFinalizadas;
+        document.querySelector('.stat-card:nth-child(3) h3').textContent = 
+            '$' + (stats.comisionesMes / 1000000).toFixed(1) + 'M';
+        
+    } catch (error) {
+        console.log('Backend no disponible, usando datos de ejemplo');
+    }
+}
+
+if (document.querySelector('.stat-card')) {
+    document.addEventListener('DOMContentLoaded', cargarEstadisticas);
+}
